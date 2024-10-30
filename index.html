@@ -1,0 +1,126 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Гладій Максим, ПП-21</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            text-align: center;
+        }
+        .box {
+            border: 2px solid #4a90e2;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            font-size: 24px;
+            color: #333;
+        }
+        .calendar {
+            margin-top: 20px;
+        }
+        .holiday {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="header" id="currentTime"></div>
+        <div class="header" id="currentDate"></div>
+    </div>
+
+    <div class="box calendar">
+        <input type="date" id="datePicker" />
+        <div class="holiday" id="holidayMessage"></div>
+    </div>
+
+    <div class="box">
+        <div class="header" id="countdown"></div>
+    </div>
+
+    <script>
+        "use strict";
+
+        function formatTime(hours, minutes) {
+            let ampm = hours < 12 ? 'am' : 'pm';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // The hour '0' should be '12'
+            return hours + ":" + (minutes < 10 ? '0' + minutes : minutes) + " " + ampm;
+        }
+
+        function displayCurrentTime() {
+            let today = new Date();
+            let hours = today.getHours();
+            let minutes = today.getMinutes();
+            let formattedTime = formatTime(hours, minutes);
+            document.getElementById("currentTime").textContent = "Поточний час - " + formattedTime;
+        }
+
+        function displayCurrentDate() {
+            let today = new Date();
+            let dayNames = ["Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота"];
+            let monthNames = ["Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень", 
+                              "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"];
+            let day = dayNames[today.getDay()];
+            let date = today.getDate();
+            let month = monthNames[today.getMonth()];
+            let year = today.getFullYear();
+            let formattedDate = day + ", " + date + " " + month + " " + year;
+            document.getElementById("currentDate").textContent = "Поточна дата - " + formattedDate;
+        }
+
+        function getHoliday(dateString) {
+            const holidays = {
+                "01-01": "Новий Рік",
+                "07-01": "Різдво Христове",
+                "08-03": "Міжнародний жіночий день",
+                "01-05": "День праці",
+                "28-06": "День Конституції України",
+                "24-08": "День Незалежності України",
+                "25-12": "Різдво Христове (катол.)",
+            };
+            const dateParts = dateString.split('-');
+            const dayMonth = `${dateParts[1]}-${dateParts[2]}`;
+            return holidays[dayMonth] || "Немає свят на цю дату";
+        }
+
+        function countdownToNewYear() {
+            let today = new Date();
+            let newYearDay = new Date(today.getFullYear() + 1, 0, 1); 
+            const day = 86400000;
+            const hour = 3600000; 
+            const minute = 60000;
+            let time = newYearDay.getTime() - today.getTime(); 
+            let days = Math.floor(time / day);
+            let hours = Math.floor((time - days * day) / hour);
+            let minutes = Math.floor((time - days * day - hours * hour) / minute);
+            let str = days + " днів, " + hours + " годин, " + minutes + " хвилин.";
+            document.getElementById("countdown").textContent = "До Нового року залишилося: " + str;
+        }
+
+        document.getElementById("datePicker").addEventListener("change", function() {
+            const selectedDate = this.value;
+            const holidayMessage = getHoliday(selectedDate);
+            document.getElementById("holidayMessage").textContent = holidayMessage;
+        });
+
+        // Виклик функцій для відображення часу, дати та зворотного відліку
+        displayCurrentTime();
+        displayCurrentDate();
+        countdownToNewYear();
+    </script>
+</body>
+</html>
